@@ -1,5 +1,5 @@
-const Twit = require('twit');
 const config = require('./config');
+const Twit = require('twit');
 const api = require('./quoteapi');
 
 exports.run = function() {
@@ -9,7 +9,6 @@ exports.run = function() {
     console.log(`**** ${q.quote}  --${q.author}`);
 
     const twit = new Twit(config);
-    console.log(twit);
-
+    console.log('ççççç' + twit);
   });
 }
