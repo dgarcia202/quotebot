@@ -2,13 +2,23 @@ const config = require('./config');
 const Twit = require('twit');
 const api = require('./quoteapi');
 
-exports.run = function() {
+exports.run = () => {
   console.log('robot running...');
 
-  api.get().then(function (q) {
+  api.get().then((q) => {
     console.log(`**** ${q.quote}  --${q.author}`);
 
     const twit = new Twit(config);
-    console.log('ççççç' + twit);
+    twit.get('statuses/user_timeline', {
+      count: 10
+    }, (err, data, response) => {
+      if (err) {
+        console.log(err);
+      } else {
+        data.forEach(x => {
+          console.log(x.text);
+        });
+      }
+    })
   });
 }
