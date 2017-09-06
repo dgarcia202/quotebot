@@ -25,7 +25,7 @@ function tweetQuote() {
     })
   });
 
-  setInterval(() => {
+  setTimeout(() => {
     tweetQuote();
   }, config.quote_interval);
 }
