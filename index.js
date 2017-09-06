@@ -1,1 +1,1 @@
-require('./quotebot').run();
+require('./bot').run();

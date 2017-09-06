@@ -19,6 +19,12 @@ const request_options = {
   }
 }
 
+function sanitizeString(str) {
+  return str
+          .replace('\'', '\\\'');
+          // .replace('"', '\\"');
+}
+
 exports.get = function () {
   return new Promise(function (resolve, reject) {
     var req = http.request(request_options, function(res) {
@@ -33,10 +39,7 @@ exports.get = function () {
       });
 
       res.on('end', () => {
-
-        console.log('No more data in response.');
-        var response_data = JSON.parse(buffer.toString());
-
+        var response_data = JSON.parse(sanitizeString(buffer.toString()));
         resolve({
           quote: response_data.quoteText,
           author: response_data.quoteAuthor
