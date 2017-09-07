@@ -28,7 +28,7 @@ function sanitizeString(str) {
 }
 
 function getQuote () {
-  return new Promise(function (resolve, reject) {
+  return new Promise((resolve, reject) => {
     var req = http.request(request_options, function(res) {
       console.log(`STATUS: ${res.statusCode}`);
       console.log(`HEADERS: ${JSON.stringify(res.headers)}`);
@@ -49,7 +49,7 @@ function getQuote () {
       });
     });
 
-    req.on('error', function(e) {
+    req.on('error', (e) => {
       console.log('problem with request: ' + e.message);
       reject(e.message);
     });
