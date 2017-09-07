@@ -5,6 +5,8 @@ const config = require('./config');
 
 const twit = new Twit(config);
 
+let timeout;
+
 const post_data = querystring.stringify({
   method: 'getQuote',
   format: 'json',
@@ -21,7 +23,7 @@ const request_options = {
     'Content-Type': 'application/x-www-form-urlencoded',
     'Content-Length': Buffer.byteLength(post_data)
   }
-}
+};
 
 function sanitizeString(str) {
   return str.replace('\'', '\\\'');
@@ -41,11 +43,15 @@ function getQuote () {
       });
 
       res.on('end', () => {
-        var response_data = JSON.parse(sanitizeString(buffer.toString()));
-        resolve({
-          quote: response_data.quoteText,
-          author: response_data.quoteAuthor
-        });
+        try {
+          var response_data = JSON.parse(sanitizeString(buffer.toString()));
+          resolve({
+            quote: response_data.quoteText,
+            author: response_data.quoteAuthor
+          });
+        } catch (err) {
+          reject(err.message);
+        }
       });
     });
 
@@ -60,7 +66,8 @@ function getQuote () {
 }
 
 module.exports.tweetQuotes = function tweetQuotes () {
-  getQuote().then((q) => {
+  getQuote()
+  .then((q) => {
 
     var status_text = `${q.quote} \n --${q.author}`;
     if (status_text.length > 140) {
@@ -77,9 +84,18 @@ module.exports.tweetQuotes = function tweetQuotes () {
         console.log('Quote tweeted!');
       }
     })
+  })
+  .catch((err) => {
+    console.log(`Quote failed due to: ${err.message}`);
   });
 
-  setTimeout(() => {
+  timeout = setTimeout(() => {
     tweetQuotes();
   }, config.quote_interval);
-}
+};
+
+module.exports.shutdown = () => {
+  if (timeout) {
+    clearTimeout(timeout);
+  }
+};
