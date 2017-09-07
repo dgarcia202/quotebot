@@ -1,5 +1,9 @@
 const http = require('http');
 const querystring = require('querystring');
+const Twit = require('twit');
+const config = require('./config');
+
+const twit = new Twit(config);
 
 const post_data = querystring.stringify({
   method: 'getQuote',
@@ -20,12 +24,10 @@ const request_options = {
 }
 
 function sanitizeString(str) {
-  return str
-          .replace('\'', '\\\'');
-          // .replace('"', '\\"');
+  return str.replace('\'', '\\\'');
 }
 
-exports.get = function () {
+function getQuote () {
   return new Promise(function (resolve, reject) {
     var req = http.request(request_options, function(res) {
       console.log(`STATUS: ${res.statusCode}`);
@@ -55,4 +57,29 @@ exports.get = function () {
     req.write(post_data);
     req.end();
   });
+}
+
+module.exports.tweetQuotes = function tweetQuotes () {
+  getQuote().then((q) => {
+
+    var status_text = `${q.quote} \n --${q.author}`;
+    if (status_text.length > 140) {
+      console.log("Quote too long, skipping.");
+      return;
+    }
+
+    twit.post('statuses/update', {
+      status: status_text
+    }, (err, data, response) => {
+      if (err) {
+        console.log(err.message);
+      } else {
+        console.log('Quote tweeted!');
+      }
+    })
+  });
+
+  setTimeout(() => {
+    tweetQuotes();
+  }, config.quote_interval);
 }

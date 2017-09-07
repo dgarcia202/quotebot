@@ -2,6 +2,10 @@
   "name": "quotebot",
   "version": "1.0.0",
   "description": "twitter bot that twits shitty quotes",
+  "repository": {
+    "type" : "git",
+    "url" : "https://github.com/dgarcia202/quotebot.git"
+  },
   "main": "index.js",
   "scripts": {
     "start": "node src/index.js",
