@@ -5,5 +5,5 @@ module.exports = {
   consumer_secret: process.env.CONSUMER_SECRET,
   access_token: process.env.ACCESS_TOKEN,
   access_token_secret: process.env.ACCESS_TOKEN_SECRET,
-  quote_interval: 10800000 /* That's three hours */
+  quote_interval: 3600000 /* That's one hour */
 }

@@ -9,8 +9,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node src/index.js",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "deploy": "now -e CONSUMER_KEY=@tw-consumer-key -e CONSUMER_SECRET=@tw-consumer-secret -e ACCESS_TOKEN=@tw-access-token  -e ACCESS_TOKEN_SECRET=@tw-access-token-secret"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "now": {
     "alias": "silly-bot-14",

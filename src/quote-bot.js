@@ -32,13 +32,13 @@ function sanitizeString(str) {
 function getQuote () {
   return new Promise((resolve, reject) => {
     var req = http.request(request_options, function(res) {
-      console.log(`STATUS: ${res.statusCode}`);
-      console.log(`HEADERS: ${JSON.stringify(res.headers)}`);
+      // console.log(`STATUS: ${res.statusCode}`);
+      // console.log(`HEADERS: ${JSON.stringify(res.headers)}`);
 
       var buffer = '';
 
       res.on('data', (chunk) => {
-        console.log(`BODY: ${chunk}`);
+        // console.log(`BODY: ${chunk}`);
         buffer += chunk;
       });
 
