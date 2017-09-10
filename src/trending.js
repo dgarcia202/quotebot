@@ -5,6 +5,13 @@ const twit = new Twit(config);
 
 let corpus;
 
+function cleanTweet(text) {
+  return text
+            .replace(/^RT @\S*: /g, '')   // removes retweet mark.
+            .replace(/https:\/\/t\.co\/[a-zA-Z0-9…]*/g, '')   // removes links.
+            .replace(/\r?\n|\r/g, ' '); // replaces newlines by spaces.
+}
+
 function getWoeid() {
   return new Promise((resolve, reject) => {
     twit.get('trends/available',
@@ -43,6 +50,7 @@ function getTrend(woeid) {
         if (trends.length == 0) {
           reject(new Error('No valid trends found in the specified location'));
         } else {
+          console.log(`choosed trend ${trends[0].query}`);
           resolve(trends[0].query);
         }
       }
@@ -54,15 +62,14 @@ function buildCorpus(trend) {
   return new Promise((resolve, reject) => {
     twit.get('search/tweets', {
       q: trend,
-      count: 1000,
+      count: 10000,
       lang: 'en',
-      // geocode: '41.3087608,-72.9272461,1000mi',
-      result_type: 'popular'
+      // geocode: '41.3087608,-72.9272461,1000mi'
     }, (err, data, response) => {
       if (err) {
         reject(err);
       } else {
-        resolve(data.statuses.map((x) => x.text).join('. '));
+        resolve(data.statuses.map((x) => cleanTweet(x.text)).join('. '));
       }
     });
   });
@@ -78,6 +85,7 @@ module.exports.tweetOnTrendingTopic = () => {
   })
   .then((corpus) => {
     console.log(corpus);
+    console.log(`corpus length is ${corpus.length}`);
   })
   .catch((err) => {
     console.error(err);

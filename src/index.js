@@ -1,4 +1,4 @@
-
+const config = require('./config');
 const readline = require("readline");
 const bot = require('./bot');
 const web = require('./web');
@@ -20,4 +20,6 @@ process.on("SIGINT", function () {
 });
 
 bot.run();
-web.start();
+if (config.start_http) {
+  web.start();
+}
