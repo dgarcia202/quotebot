@@ -8,7 +8,7 @@ const twit = new Twit(config);
 function getFollowersRecursive(cursor, ids, callback) {
   twit.get('followers/ids', {
     screen_name: 'ginomi', // 'sillyrobot14'
-    count:200,
+    count:5000,
     cursor: cursor
   }, (err, data, response) => {
     if (err) {
@@ -26,9 +26,13 @@ function getFollowersRecursive(cursor, ids, callback) {
 }
 
 function getAllFollowers() {
-  getFollowersRecursive('-1', [], (ids) => {
-    console.log('++++++++' + ids.length);
+  return new Promise((resolve, reject) => {
+    getFollowersRecursive('-1', [], (ids) => {
+      resolve(ids);
+    });
   });
 }
 
-module.exports.run = getAllFollowers;
+module.exports.update = () => {
+  getAllFollowers().then((ids) => console.log('length' + ids.length));
+};

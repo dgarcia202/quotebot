@@ -6,7 +6,7 @@ exports.run = () => {
   console.log('robot running...');
   // quotes.tweetQuotes();
   // trending.tweetOnTrendingTopic();
-  followback.run();
+  followback.update();
 };
 
 exports.shutdown = () => {
