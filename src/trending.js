@@ -1,7 +1,9 @@
+const rita = require('rita');
 const Twit = require('twit');
 const config = require('./config');
 
 const twit = new Twit(config);
+const markov = new rita.RiMarkov(3);
 
 let corpus;
 
@@ -84,8 +86,8 @@ module.exports.tweetOnTrendingTopic = () => {
     return buildCorpus(trend);
   })
   .then((corpus) => {
-    console.log(corpus);
-    console.log(`corpus length is ${corpus.length}`);
+    markov.loadText(corpus);
+    console.log(markov.generateSentences(5));
   })
   .catch((err) => {
     console.error(err);
