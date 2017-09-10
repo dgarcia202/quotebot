@@ -5,7 +5,9 @@ const config = require('./config');
 const twit = new Twit(config);
 const markov = new rita.RiMarkov(3);
 
-let corpus;
+let corpus = {
+  data: []
+};
 
 function cleanTweet(text) {
   return text
@@ -64,14 +66,16 @@ function buildCorpus(trend) {
   return new Promise((resolve, reject) => {
     twit.get('search/tweets', {
       q: trend,
-      count: 10000,
+      count: 100,
       lang: 'en',
       // geocode: '41.3087608,-72.9272461,1000mi'
     }, (err, data, response) => {
       if (err) {
         reject(err);
       } else {
-        resolve(data.statuses.map((x) => cleanTweet(x.text)).join('. '));
+        console.log(`Total of ${data.statuses.length} tweets retrieved.`)
+        corpus.data = data.statuses.map((x) => cleanTweet(x.text));
+        resolve(corpus);
       }
     });
   });
