@@ -50,14 +50,14 @@ function getQuote () {
             author: response_data.quoteAuthor
           });
         } catch (err) {
-          reject(err.message);
+          reject(err);
         }
       });
     });
 
     req.on('error', (e) => {
       console.log('problem with request: ' + e.message);
-      reject(e.message);
+      reject(e);
     });
 
     req.write(post_data);

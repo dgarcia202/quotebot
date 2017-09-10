@@ -33,7 +33,7 @@ function getTrend(woeid) {
     },
     (err, data, response) => {
       if (err) {
-        reject(err.message);
+        reject(err);
       } else {
         var trends = data[0]
                 .trends
@@ -41,7 +41,7 @@ function getTrend(woeid) {
                 .sort((a, b) => b.tweet_volume - a.tweet_volume);
 
         if (trends.length == 0) {
-          reject('No valid trends found in the specified location');
+          reject(new Error('No valid trends found in the specified location'));
         } else {
           resolve(trends[0].query);
         }
@@ -54,9 +54,9 @@ function buildCorpus(trend) {
   return new Promise((resolve, reject) => {
     twit.get('search/tweets', {
       q: trend,
-      count: 25,
+      count: 1000,
       lang: 'en',
-      geocode: '41.3087608,-72.9272461,1000mi',
+      // geocode: '41.3087608,-72.9272461,1000mi',
       result_type: 'popular'
     }, (err, data, response) => {
       if (err) {
@@ -78,5 +78,8 @@ module.exports.tweetOnTrendingTopic = () => {
   })
   .then((corpus) => {
     console.log(corpus);
+  })
+  .catch((err) => {
+    console.error(err);
   });
 };
