@@ -1,13 +1,13 @@
-const quoteBot = require('./quote-bot');
-const trendingBot = require('./trending-bot');
+const quotes = require('./quotes');
+const trending = require('./trending');
 
 exports.run = () => {
   console.log('robot running...');
-  // quoteBot.tweetQuotes();
-  trendingBot.showTrends();
+  // quotes.tweetQuotes();
+  trending.tweetOnTrendingTopic();
   // trendingBot.showPlaces();
 };
 
 exports.shutdown = () => {
-  // quoteBot.shutdown();
+  // quotes.shutdown();
 };
