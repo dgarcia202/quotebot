@@ -28,4 +28,16 @@ describe('Array extensions', () => {
     var numbers = [1, 2, 3, 4, 5];
     expect(numbers.elementAt(2)).to.equal(numbers[2]);
   });
+
+  it('diff() can substract two arrays', () => {
+    var a1 = [1, 2, 3, 4, 5];
+    var a2 = [1, 2, 3];
+    var r = a1.diff(a2);
+
+    expect(r).to.be.an('array').that.does.include(4);
+    expect(r).to.be.an('array').that.does.include(5);
+    expect(r).to.be.an('array').that.does.not.include(1);
+    expect(r).to.be.an('array').that.does.not.include(2);
+    expect(r).to.be.an('array').that.does.not.include(3);
+  });
 });
