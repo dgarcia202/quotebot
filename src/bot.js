@@ -6,12 +6,12 @@ const followback = require('./followback');
 
 exports.run = () => {
   console.log('robot running...');
-  // quotes.tweetQuotes();
+  quotes.tweetQuotes();
   // trending.tweetOnTrendingTopic();
   followback.updateOverTime();
 };
 
 exports.shutdown = () => {
-  // quotes.shutdown();
+  quotes.shutdown();
   followback.shutdown();
 };

@@ -95,6 +95,7 @@ module.exports.tweetQuotes = function tweetQuotes () {
 };
 
 module.exports.shutdown = () => {
+  console.info('Shutting down quotes bot!');
   if (timeout) {
     clearTimeout(timeout);
   }

@@ -107,6 +107,7 @@ module.exports.updateOverTime = function update() {
 };
 
 module.exports.shutdown = () => {
+  console.info('Shutting down follow back bot!');
   if (timeout) {
     clearTimeout(timeout);
   }
