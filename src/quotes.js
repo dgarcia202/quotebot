@@ -5,7 +5,7 @@ const config = require('./config');
 
 const twit = new Twit(config.twitter);
 
-let timeout;
+let timeout = null;
 
 const post_data = querystring.stringify({
   method: 'getQuote',

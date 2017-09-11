@@ -99,3 +99,8 @@ module.exports.tweetOnTrendingTopic = () => {
     console.error(err);
   });
 };
+
+module.exports.shutdown = () => {
+  console.info('Shutting down trending bot!');
+  // Nothing to do yet.
+};
