@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 const Twit = require('twit');
 const config = require('./config');
@@ -7,22 +7,42 @@ const twit = new Twit(config);
 
 function getFollowersRecursive(cursor, ids, callback) {
   twit.get('followers/ids', {
-    screen_name: 'ginomi', // 'sillyrobot14'
+    screen_name: 'sillyrobot14',
     count:5000,
-    cursor: cursor
+    cursor: cursor,
+    stringify_ids: true
   }, (err, data, response) => {
     if (err) {
       throw err;
     } else {
       ids = ids.concat(data.ids);
-      console.log('partial ++' + data.ids.length);
       if (data.next_cursor_str !== '0') {
         getFollowersRecursive(data.next_cursor_str, ids, callback);
       } else {
         callback(ids);
       }
     }
-  })
+  });
+}
+
+function getFriendsRecurive(cursor, ids, callback) {
+  twit.get('friends/ids', {
+    screen_name: 'sillyrobot14', // 'sillyrobot14',
+    count:100,
+    cursor: cursor,
+    stringify_ids: true
+  }, (err, data, response) => {
+    if (err) {
+      throw err;
+    } else {
+      ids = ids.concat(data.ids);
+      if (data.next_cursor_str !== '0') {
+        getFriendsRecurive(data.next_cursor_str, ids, callback);
+      } else {
+        callback(ids);
+      }
+    }
+  });
 }
 
 function getAllFollowers() {
@@ -33,6 +53,23 @@ function getAllFollowers() {
   });
 }
 
+function getAllFriends() {
+  return new Promise((resolve, reject) => {
+    getFriendsRecurive('-1', [], (ids) => {
+      resolve(ids);
+    });
+  });
+}
+
 module.exports.update = () => {
-  getAllFollowers().then((ids) => console.log('length' + ids.length));
+  Promise.all([getAllFollowers(), getAllFriends()])
+    .then(values => {
+      let followers = values[0];
+      let friends = values[1];
+
+      console.log(`A total of ${followers.length} followers and ${friends.length} friends found.`)
+    })
+    .catch(err => {
+      console.error(err);
+    });
 };

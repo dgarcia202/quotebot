@@ -1,3 +1,5 @@
+"use strict";
+
 const quotes = require('./quotes');
 const trending = require('./trending');
 const followback = require('./followback');

@@ -1,3 +1,5 @@
+"use strict";
+
 const rita = require('rita');
 const Twit = require('twit');
 const config = require('./config');
