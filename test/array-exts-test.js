@@ -13,4 +13,19 @@ describe('Array extensions', () => {
     var numbers = [1, 2, 3, 4, 5];
     expect(numbers.last()).to.equal(numbers[numbers.length - 1]);
   });
+
+  it('elementAt() retrieves first element of the array', () => {
+    var numbers = [1, 2, 3, 4, 5];
+    expect(numbers.elementAt(0)).to.equal(numbers[0]);
+  });
+
+  it('elementAt() retrieves last element of the array', () => {
+    var numbers = [1, 2, 3, 4, 5];
+    expect(numbers.elementAt(numbers.length - 1)).to.equal(numbers[numbers.length - 1]);
+  });
+
+  it('elementAt() retrieves random middle element of the array', () => {
+    var numbers = [1, 2, 3, 4, 5];
+    expect(numbers.elementAt(2)).to.equal(numbers[2]);
+  });
 });
