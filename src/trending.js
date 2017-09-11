@@ -6,10 +6,6 @@ const twitter = require('./twitter-client');
 const rita = require('rita');
 const markov = new rita.RiMarkov(3);
 
-let corpus = {    // TODO: use this for something or delete!
-  data: []
-};
-
 function cleanTweet(text) {
   return text
             .replace(/^RT @\S*: /g, '')   // removes retweet mark.

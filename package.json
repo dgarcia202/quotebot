@@ -9,7 +9,7 @@
   "main": "index.js",
   "scripts": {
     "start": "cls & node src/index.js",
-    "test": "mocha test --recursive"
+    "test": "mocha test --recursive --recursive"
   },
   "now": {
     "alias": "silly-bot-14",
