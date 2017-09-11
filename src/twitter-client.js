@@ -85,4 +85,66 @@ module.exports.follow = (id) => {
       }
     })
   });
+};
+
+module.exports.getWoeid = (city, country) => {
+  return new Promise((resolve, reject) => {
+    twit.get('trends/available',
+    {
+    },
+    (err, data, response) => {
+      if (err) {
+        reject(err.message);
+      } else {
+        let filtered = data.filter(x => x.name == city && x.country == country);
+        if (filtered.length == 0) {
+          reject('New york in the US not found as a trending place available');
+        } else {
+          resolve(filtered[0].woeid);
+        }
+      }
+    });
+  });
+}
+
+module.exports.getTopTrend = woeid => {
+  return new Promise((resolve, reject) => {
+    twit.get('trends/place',
+    {
+      id: woeid
+    },
+    (err, data, response) => {
+      if (err) {
+        reject(err);
+      } else {
+        var trends = data[0]
+                .trends
+                .filter(x => x.promoted_content == null && x.tweet_volume != null)
+                .sort((a, b) => b.tweet_volume - a.tweet_volume);
+
+        if (trends.length == 0) {
+          reject(new Error('No valid trends found in the specified location'));
+        } else {
+          console.log(`choosed trend ${trends[0].query}`);
+          resolve(trends[0].query);
+        }
+      }
+    });
+  });
+}
+
+module.exports.search = query => {
+  return new Promise((resolve, reject) => {
+    twit.get('search/tweets', {
+      q: query,
+      count: 100,
+      lang: 'en'
+    }, (err, data, response) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(data.statuses.map(x => x.text));
+      }
+    });
+  });
 }
