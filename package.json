@@ -9,7 +9,7 @@
   "main": "index.js",
   "scripts": {
     "start": "cls & node src/index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha test --recursive"
   },
   "now": {
     "alias": "silly-bot-14",
@@ -23,5 +23,9 @@
     "dotenv": "^4.0.0",
     "rita": "^1.2.12",
     "twit": "^2.2.9"
+  },
+  "devDependencies": {
+    "chai": "^4.1.2",
+    "mocha": "^3.5.2"
   }
 }
