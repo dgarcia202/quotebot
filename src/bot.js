@@ -7,8 +7,8 @@ const followback = require('./followback');
 exports.run = () => {
   console.log('robot running...');
   quotes.tweetQuotes();
-  trending.tweetOnTrendingTopic();
-  followback.updateOverTime();
+  // trending.tweetOnTrendingTopic();
+  // followback.updateOverTime();
 };
 
 exports.shutdown = () => {

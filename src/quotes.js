@@ -1,9 +1,7 @@
 const http = require('http');
 const querystring = require('querystring');
-const Twit = require('twit');
+const twitter = require('./twitter-client');
 const config = require('./config');
-
-const twit = new Twit(config.twitter);
 
 let timeout = null;
 
@@ -67,7 +65,7 @@ function getQuote () {
 
 module.exports.tweetQuotes = function tweetQuotes () {
   getQuote()
-  .then((q) => {
+  .then(q => {
 
     var status_text = `${q.quote} \n --${q.author}`;
     if (status_text.length > 140) {
@@ -75,17 +73,12 @@ module.exports.tweetQuotes = function tweetQuotes () {
       return;
     }
 
-    twit.post('statuses/update', {
-      status: status_text
-    }, (err, data, response) => {
-      if (err) {
-        console.log(err.message);
-      } else {
-        console.log('Quote tweeted!');
-      }
-    })
+    return twitter.tweet(status_text);
   })
-  .catch((err) => {
+  .then(id => {
+    console.log(`Quote tweeted! ${id}`);
+  })
+  .catch(err => {
     console.log(`Quote failed due to: ${err.message}`);
   });
 
