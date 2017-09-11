@@ -17,5 +17,6 @@ module.exports = {
   },
   start_http: false,
   quote_interval: hours(10),
-  followback_interval: minutes(20)
+  followback_interval: minutes(15),
+  screen_name: 'sillyrobot14'
 }
