@@ -4,7 +4,7 @@ const rita = require('rita');
 const Twit = require('twit');
 const config = require('./config');
 
-const twit = new Twit(config);
+const twit = new Twit(config.twitter);
 const markov = new rita.RiMarkov(3);
 
 let corpus = {

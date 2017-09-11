@@ -3,7 +3,7 @@ const querystring = require('querystring');
 const Twit = require('twit');
 const config = require('./config');
 
-const twit = new Twit(config);
+const twit = new Twit(config.twitter);
 
 let timeout;
 
