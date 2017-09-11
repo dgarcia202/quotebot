@@ -8,9 +8,10 @@ exports.run = () => {
   console.log('robot running...');
   // quotes.tweetQuotes();
   // trending.tweetOnTrendingTopic();
-  followback.update();
+  followback.updateOverTime();
 };
 
 exports.shutdown = () => {
   // quotes.shutdown();
+  followback.shutdown();
 };

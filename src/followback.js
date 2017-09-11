@@ -5,6 +5,8 @@ const config = require('./config');
 
 const twit = new Twit(config);
 
+let timeout;
+
 function getFollowersRecursive(cursor, ids, callback) {
   twit.get('followers/ids', {
     screen_name: 'sillyrobot14',
@@ -61,7 +63,21 @@ function getAllFriends() {
   });
 }
 
-module.exports.update = () => {
+function followUser(id) {
+  return new Promise((resolve, reject) => {
+    twit.post('friendships/create', {
+      user_id: id
+    }, (err, data, response) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(data.id_str);
+      }
+    })
+  });
+}
+
+module.exports.updateOverTime = function update() {
   Promise.all([getAllFollowers(), getAllFriends()])
     .then(values => {
       let followers = values.first();
@@ -71,9 +87,27 @@ module.exports.update = () => {
 
       let to_follow = followers.diff(friends);
       console.log(`A total of ${to_follow.length} unfollowed followers found.`);
-      console.log(to_follow);
+      let follow_tasks = [];
+      to_follow.forEach(id => {
+        follow_tasks.push(followUser(id));
+      });
+
+      return Promise.all(follow_tasks);
+    })
+    .then(values => {
+      console.log(`${values.length} users followed`);
     })
     .catch(err => {
       console.error(err);
     });
+
+    timeout = setTimeout(() => {
+      update();
+    }, 3600000);
+};
+
+module.exports.shutdown = () => {
+  if (timeout) {
+    clearTimeout(timeout);
+  }
 };
