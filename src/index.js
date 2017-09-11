@@ -1,5 +1,9 @@
+"use strict";
+
+require('./array-exts');
+
 const config = require('./config');
-const readline = require("readline");
+const readline = require('readline');
 const bot = require('./bot');
 const web = require('./web');
 

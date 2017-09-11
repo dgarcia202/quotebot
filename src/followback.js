@@ -64,10 +64,14 @@ function getAllFriends() {
 module.exports.update = () => {
   Promise.all([getAllFollowers(), getAllFriends()])
     .then(values => {
-      let followers = values[0];
-      let friends = values[1];
+      let followers = values.first();
+      let friends = values.last();
 
-      console.log(`A total of ${followers.length} followers and ${friends.length} friends found.`)
+      console.log(`A total of ${followers.length} followers and ${friends.length} friends found.`);
+
+      let to_follow = followers.diff(friends);
+      console.log(`A total of ${to_follow.length} unfollowed followers found.`);
+      console.log(to_follow);
     })
     .catch(err => {
       console.error(err);
