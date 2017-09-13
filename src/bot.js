@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 const quotes = require('./quotes');
 const trending = require('./trending');
@@ -15,7 +15,13 @@ exports.run = () => {
     }
   });
 
-  // trending.tweetOnTrendingTopic();
+  trending.tweetOnTrendingTopics((err, data) => {
+    if (err) {
+      console.error(err);
+    } else {
+      console.info(`Tweet on trending topic ${data.query} (id: ${data.id}))`);
+    }
+  });
 
   followback.updateOverTime((err, data) => {
     if (err) {
@@ -28,7 +34,7 @@ exports.run = () => {
 
 exports.shutdown = () => {
   console.info('robot shutting down...');
-  
+
   if (quotes) {
     quotes.shutdown();
   }

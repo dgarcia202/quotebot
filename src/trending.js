@@ -6,6 +6,8 @@ const twitter = require('./twitter-client');
 const rita = require('rita');
 const markov = new rita.RiMarkov(3);
 
+let timeout = null;
+
 function cleanTweet(text) {
   return text
             .replace(/^RT @\S*: /g, '')   // removes retweet mark.
@@ -13,24 +15,40 @@ function cleanTweet(text) {
             .replace(/\r?\n|\r/g, ' '); // replaces newlines by spaces.
 }
 
-module.exports.tweetOnTrendingTopic = () => {
+module.exports.tweetOnTrendingTopic = function tweetOnTrendingTopic(callback) {
+  let data = {};
   twitter.getWoeid('New York', 'United States')
   .then((woeid) => {
     return twitter.getTopTrend(woeid);
   })
   .then((trend) => {
-    return twitter.search(trend);
+    data.trend = trend;
+    return twitter.search(data.trend);
   })
   .then((elements) => {
     markov.loadText(elements.map(x => cleanTweet(x)).join('. '));
-    console.log(markov.generateSentences(5));
+    data.text = markov.generateSentences(5)[Math.floor(Math.random() * 5)];
+    return twitter.tweet(data.text);
+  })
+  .then(id => {
+    data.id = id;
+    timeout = setTimeout(() => {
+      tweetOnTrendingTopic(callback);
+    }, config.trending_interval);
+
+    if (callback) {
+      callback(null, data);
+    }
   })
   .catch((err) => {
-    console.error(err);
+    if (callback) {
+      callback(err);
+    }
   });
 };
 
 module.exports.shutdown = () => {
-  console.info('Shutting down trending bot!');
-  // Nothing to do yet.
+  if (timeout) {
+    clearTimeout(timeout);
+  }
 };

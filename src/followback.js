@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 const config = require('./config');
 const twitter = require('./twitter-client');
@@ -15,7 +15,7 @@ module.exports.updateOverTime = function update(callback) {
       let followers = values.first();
       let friends = values.last();
       let to_follow = followers.diff(friends);
-      
+
       let follow_tasks = [];
       to_follow.forEach(id => {
         follow_tasks.push(twitter.follow(id));
