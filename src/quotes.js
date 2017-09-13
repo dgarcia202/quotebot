@@ -68,28 +68,25 @@ module.exports.tweetQuotes = function tweetQuotes (callback) {
   .then(q => {
 
     var status_text = `${q.quote} \n --${q.author}`;
-    console.log(status_text); //TODO: remove
     if (status_text.length > 140) {
-      console.log("Quote too long, skipping.");
-      return null;
+      return Promise.reject(new Error("Quote too long."));
     }
 
     return twitter.tweet(status_text);
   })
-  .then(id => {
-    console.log(id ? `Quote tweeted! ${id}` : 'Nothing tweeted :(');
-  })
-  .then(() => {
+  .then((id) => {
     timeout = setTimeout(() => {
       tweetQuotes(callback);
     }, config.quote_interval);
 
     if (callback) {
-      callback();
+      callback(null, id);
     }
   })
   .catch(err => {
-    console.log(`Quote failed due to: ${err.message}`);
+    if (callback) {
+      callback(err);
+    }
   });
 };
 

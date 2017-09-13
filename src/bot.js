@@ -6,8 +6,16 @@ const followback = require('./followback');
 
 exports.run = () => {
   console.log('robot running...');
-  // quotes.tweetQuotes();
-  trending.tweetOnTrendingTopic();
+  
+  quotes.tweetQuotes((err, data) => {
+      if (err) {
+        console.error(err);
+      } else {
+        console.info('Quote tweeted!');
+      }
+  });
+
+  // trending.tweetOnTrendingTopic();
   // followback.updateOverTime();
 };
 
