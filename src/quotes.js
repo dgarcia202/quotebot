@@ -62,6 +62,10 @@ function getQuote () {
   });
 }
 
+module.exports.isRunning = () => {
+  return timeout !== null;
+};
+
 module.exports.tweetQuotes = function tweetQuotes (callback) {
   getQuote()
   .then(q => {
@@ -90,7 +94,6 @@ module.exports.tweetQuotes = function tweetQuotes (callback) {
 };
 
 module.exports.shutdown = () => {
-  console.info('Shutting down quotes bot!');
   if (timeout) {
     clearTimeout(timeout);
   }

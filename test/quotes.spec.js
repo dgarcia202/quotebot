@@ -50,11 +50,12 @@ describe('Quotes bot', () => {
     nock.cleanAll();
   });
 
-  it('tweets quote', done => {
+  it('successfully tweets quote', done => {
     mockQuoteRequestOk();
     sut.tweetQuotes((err, data) => {
       assert.equal(data, 'fake_twit_id', 'Tweet id is not correct.');
       assert.isTrue(twitterStub.tweet.called, 'Twitter status was not updated.');
+      sut.shutdown();
       done();
     });
   });
@@ -64,6 +65,7 @@ describe('Quotes bot', () => {
     sut.tweetQuotes((err, data) => {
       assert.isOk(err, 'Error object is not set.');
       assert.isNotTrue(twitterStub.tweet.called, 'Twitter status shouldn\'t be updated.');
+      sut.shutdown();
       done();
     });
   });
@@ -73,6 +75,7 @@ describe('Quotes bot', () => {
     sut.tweetQuotes((err, data) => {
       assert.isOk(err, 'Error object is not set.');
       assert.isNotTrue(twitterStub.tweet.called, 'Twitter status shouldn\'t be updated.');
+      sut.shutdown();
       done();
     });
   });
@@ -83,6 +86,25 @@ describe('Quotes bot', () => {
     sut.tweetQuotes((err, data) => {
       assert.isOk(err, 'Error object is not set.');
       assert.isTrue(twitterStub.tweet.called, 'Twitter call wasn\'t made.');
+      sut.shutdown();
+      done();
+    });
+  });
+
+  it('keeps running after successful quote', done => {
+    mockQuoteRequestOk();
+    sut.tweetQuotes((err, data) => {
+      assert.isTrue(sut.isRunning(), 'Bot stopped running.');
+      sut.shutdown();
+      done();
+    });
+  });
+
+  it('keeps running after error', done => {
+    mockQuoreRequestError();
+    sut.tweetQuotes((err, data) => {
+      assert.isTrue(sut.isRunning(), 'Bot stopped running.');
+      sut.shutdown();
       done();
     });
   });
