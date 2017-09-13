@@ -5,13 +5,13 @@ const trending = require('./trending');
 const followback = require('./followback');
 
 exports.run = () => {
-  console.log('robot running...');
+  console.info('robot running...');
 
   quotes.tweetQuotes((err, data) => {
     if (err) {
       console.error(err);
     } else {
-      console.info('Quote tweeted!');
+      console.info(`Quote tweeted! (id: ${data})`);
     }
   });
 
@@ -21,21 +21,23 @@ exports.run = () => {
     if (err) {
       console.error(err);
     } else {
-      console.info('Follow back performed!');
+      console.info(`Followed ${data.length} new users`);
     }
   });
 };
 
 exports.shutdown = () => {
+  console.info('robot shutting down...');
+  
   if (quotes) {
-      quotes.shutdown();
+    quotes.shutdown();
   }
 
   if (followback) {
-      followback.shutdown();
+    followback.shutdown();
   }
 
   if (trending) {
-      trending.shutdown();
+    trending.shutdown();
   }
 };
