@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 describe('Quotes bot', () => {
   const proxyquire = require('proxyquire');

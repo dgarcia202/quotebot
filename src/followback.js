@@ -5,16 +5,17 @@ const twitter = require('./twitter-client');
 
 let timeout = null;
 
-module.exports.updateOverTime = function update() {
+module.exports.isRunning = () => {
+  return timeout !== null;
+};
+
+module.exports.updateOverTime = function update(callback) {
   Promise.all([twitter.getAllFollowerIds(), twitter.getAllFriendIds()])
     .then(values => {
       let followers = values.first();
       let friends = values.last();
-
-      console.log(`A total of ${followers.length} followers and ${friends.length} friends found.`);
-
       let to_follow = followers.diff(friends);
-      console.log(`A total of ${to_follow.length} unfollowed followers found.`);
+      
       let follow_tasks = [];
       to_follow.forEach(id => {
         follow_tasks.push(twitter.follow(id));
@@ -23,19 +24,22 @@ module.exports.updateOverTime = function update() {
       return Promise.all(follow_tasks);
     })
     .then(values => {
-      console.log(`${values.length} users followed`);
+      timeout = setTimeout(() => {
+        update(callback);
+      }, config.followback_interval);
+
+      if (callback) {
+        callback(null, values);
+      }
     })
     .catch(err => {
-      console.error(err);
+      if (callback) {
+        callback(err);
+      }
     });
-
-    timeout = setTimeout(() => {
-      update();
-    }, config.followback_interval);
 };
 
 module.exports.shutdown = () => {
-  console.info('Shutting down follow back bot!');
   if (timeout) {
     clearTimeout(timeout);
   }
