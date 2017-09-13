@@ -54,7 +54,6 @@ function getQuote () {
     });
 
     req.on('error', (e) => {
-      console.log('problem with request: ' + e.message);
       reject(e);
     });
 

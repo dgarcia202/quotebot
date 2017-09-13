@@ -35,6 +35,12 @@ describe('Quotes bot', () => {
       });
   }
 
+  function mockQuoreRequestError() {
+    nock('http://api.forismatic.com:80', {"encodedQueryParams":true})
+      .post('/api/1.0/', "method=getQuote&format=json&key=5126296161&lang=en")
+      .replyWithError('Internal server error');
+  }
+
   beforeEach(() => {
     sinon.stub(twitterStub, 'tweet').resolves('fake_twit_id');
   });
@@ -58,6 +64,25 @@ describe('Quotes bot', () => {
     sut.tweetQuotes((err, data) => {
       assert.isOk(err, 'Error object is not set.');
       assert.isNotTrue(twitterStub.tweet.called, 'Twitter status shouldn\'t be updated.');
+      done();
+    });
+  });
+
+  it('handles quote API down', done => {
+    mockQuoreRequestError();
+    sut.tweetQuotes((err, data) => {
+      assert.isOk(err, 'Error object is not set.');
+      assert.isNotTrue(twitterStub.tweet.called, 'Twitter status shouldn\'t be updated.');
+      done();
+    });
+  });
+
+  it('handles twitter client error', done => {
+    mockQuoteRequestOk();
+    twitterStub.tweet.throws();
+    sut.tweetQuotes((err, data) => {
+      assert.isOk(err, 'Error object is not set.');
+      assert.isTrue(twitterStub.tweet.called, 'Twitter call wasn\'t made.');
       done();
     });
   });
