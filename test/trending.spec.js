@@ -22,7 +22,6 @@ describe('Trending bot', () => {
     sinon.stub(twitterStub, 'getWoeid').resolves('fake_woeid');
     sinon.stub(twitterStub, 'getTopTrend').resolves('some_topic');
     sinon.stub(twitterStub, 'search').resolves(['tweet A', 'tweet B', 'tweet C']);
-
     sinon.stub(ritaStub.RiMarkov.prototype, 'loadText');
     sinon.stub(ritaStub.RiMarkov.prototype, 'generateSentences').returns(['','','','','']);
   });
@@ -32,7 +31,6 @@ describe('Trending bot', () => {
     twitterStub.getWoeid.restore();
     twitterStub.getTopTrend.restore();
     twitterStub.search.restore();
-
     ritaStub.RiMarkov.prototype.loadText.restore();
     ritaStub.RiMarkov.prototype.generateSentences.restore();
   });
@@ -45,9 +43,50 @@ describe('Trending bot', () => {
     });
   });
 
-  it('choses the top topic of the list');
-  it('handles twitter client error');
-  it('keeps running after an iteration');
+  it('choses the top topic of the list', done => {
+    sut.tweetOnTrendingTopic((err, data) => {
+      assert.equal(data.trend, 'some_topic', 'Trend query is missed in results');
+      sut.shutdown();
+      done();
+    });
+  });
+
+  it('handles twitter client error', () => {
+    return new Promise((resolve, reject) => {
+      twitterStub.tweet.rejects();
+      twitterStub.getWoeid.rejects();
+      twitterStub.getTopTrend.rejects();
+      twitterStub.search.rejects();
+
+      sut.tweetOnTrendingTopic((err, data) => {
+        if (err) {
+          console.log(err);
+          reject();
+        } else {
+          resolve();
+        }
+      });
+    }).then(() => {
+      assert.isNotTrue(twitterStub.tweet.called, 'Nothing should be twitted');
+      sut.shutdown();
+    });
+  });
+
+  it('keeps running after an iteration', () => {
+    return new Promise((resolve, reject) => {
+      sut.tweetOnTrendingTopic((err, data) => {
+        if (err) {
+          reject();
+        } else {
+          resolve();
+        }
+      });
+    }).then(() => {
+      assert.isTrue(sut.isRunning(), 'Bot stopped running.');
+      sut.shutdown();
+    });
+  });
+
   it('keeps running after an error');
   it('handles no topic found');
   it('handles no valid topics found');

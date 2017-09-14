@@ -26,14 +26,9 @@ module.exports.tweetOnTrendingTopic = function tweetOnTrendingTopic(callback) {
     return twitter.search(data.trend);
   })
   .then((elements) => {
-    try {
-      console.log(elements.map(x => cleanTweet(x)).join('. '));
       markov.loadText(elements.map(x => cleanTweet(x)).join('. '));
       data.text = markov.generateSentences(5)[Math.floor(Math.random() * 5)];
       return twitter.tweet(data.text);
-    } catch(err) {
-      Promise.reject(err);
-    }
   })
   .then(id => {
     data.id = id;
@@ -50,6 +45,10 @@ module.exports.tweetOnTrendingTopic = function tweetOnTrendingTopic(callback) {
       callback(err);
     }
   });
+};
+
+module.exports.isRunning = () => {
+  return timeout !== null;
 };
 
 module.exports.shutdown = () => {
