@@ -6,10 +6,7 @@ describe('Quotes bot', () => {
   const nock = require('nock');
   const sinon = require('sinon');
 
-  let twitterStub = require('../src/twitter-client');
-  let sut = proxyquire('../src/quotes', {
-    './twitter-client': twitterStub
-  });
+  let sut, twitterStub;
 
   function mockQuoteRequestOk() {
     nock('http://api.forismatic.com:80', {"encodedQueryParams":true})
@@ -40,6 +37,13 @@ describe('Quotes bot', () => {
       .post('/api/1.0/', "method=getQuote&format=json&key=5126296161&lang=en")
       .replyWithError('Internal server error');
   }
+
+  before(() => {
+    twitterStub = require('../src/twitter-client');
+    sut = proxyquire('../src/quotes', {
+      './twitter-client': twitterStub
+    });    
+  });
 
   beforeEach(() => {
     sinon.stub(twitterStub, 'tweet').resolves('fake_twit_id');

@@ -6,11 +6,15 @@ describe('Trending bot', () => {
   const nock = require('nock');
   const sinon = require('sinon');
 
-  let twitterStub = require('../src/twitter-client');
-  let ritaStub = require('rita');
-  let sut = proxyquire('../src/trending', {
-    'rita': ritaStub,
-    './twitter-client': twitterStub
+  let sut, twitterStub, ritaStub;
+
+  before(() => {
+    twitterStub = require('../src/twitter-client');
+    ritaStub = require('rita');
+    sut = proxyquire('../src/trending', {
+      'rita': ritaStub,
+      './twitter-client': twitterStub
+    });
   });
 
   beforeEach(() => {

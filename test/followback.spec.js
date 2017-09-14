@@ -6,9 +6,13 @@ describe('Folowback bot', () => {
   const nock = require('nock');
   const sinon = require('sinon');
 
-  let twitterStub = require('../src/twitter-client');
-  let sut = proxyquire('../src/followback', {
-    './twitter-client': twitterStub
+  let sut, twitterStub;
+
+  before(() => {
+    twitterStub = require('../src/twitter-client');
+    sut = proxyquire('../src/followback', {
+      './twitter-client': twitterStub
+    });
   });
 
   beforeEach(() => {
