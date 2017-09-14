@@ -17,18 +17,10 @@ describe('Trending bot', () => {
     sinon.stub(twitterStub, 'tweet').resolves('fake_tweet_id');
     sinon.stub(twitterStub, 'getWoeid').resolves('fake_woeid');
     sinon.stub(twitterStub, 'getTopTrend').resolves('some_topic');
-    sinon.stub(twitterStub, 'search').resolves(['tweet A', 'tweet B']);
-/*    sinon.stub(ritaStub, 'RiMarkov').returns({
-      generateSentences: number => {
-        return ['Sentence A',
-            'Sentence B',
-            'Sentence C',
-            'Sentence D',
-            'Sentence E'];
-      },
-      loadText: text => {
-      }
-    });*/
+    sinon.stub(twitterStub, 'search').resolves(['tweet A', 'tweet B', 'tweet C']);
+
+    sinon.stub(ritaStub.RiMarkov.prototype, 'loadText');
+    sinon.stub(ritaStub.RiMarkov.prototype, 'generateSentences').returns(['','','','','']);
   });
 
   afterEach(() => {
@@ -36,12 +28,13 @@ describe('Trending bot', () => {
     twitterStub.getWoeid.restore();
     twitterStub.getTopTrend.restore();
     twitterStub.search.restore();
-    //ritaStub.RiMarkov.restore();
+
+    ritaStub.RiMarkov.prototype.loadText.restore();
+    ritaStub.RiMarkov.prototype.generateSentences.restore();
   });
 
   it('tweets on the top trending', done => {
     sut.tweetOnTrendingTopic((err, data) => {
-      console.error(err);
       assert.isTrue(twitterStub.tweet.calledOnce, 'Nothing was twitted');
       sut.shutdown();
       done();
