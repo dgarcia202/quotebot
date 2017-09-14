@@ -1,5 +1,4 @@
-var chai = require('chai');
-var assert = chai.assert;
+var assert = require('chai').assert;
 
 require('../src/array-exts');
 
@@ -11,7 +10,7 @@ describe('Array extensions', () => {
 
   it('first() must return null on empty array', () => {
     var arr = [];
-    assert.isNull(arr.first(), 'Returned element must be null.')
+    assert.isNull(arr.first(), 'Returned element must be null.');
   });
 
   it('last() returns last element of the collection', () => {
