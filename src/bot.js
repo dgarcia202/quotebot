@@ -15,7 +15,7 @@ exports.run = () => {
     }
   });
 
-  trending.tweetOnTrendingTopics((err, data) => {
+  trending.tweetOnTrendingTopic((err, data) => {
     if (err) {
       console.error(err);
     } else {

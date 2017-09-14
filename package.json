@@ -6,7 +6,7 @@
     "type": "git",
     "url": "https://github.com/dgarcia202/quotebot.git"
   },
-  "main": "index.js",
+  "main": "src/index.js",
   "scripts": {
     "start": "cls & node src/index.js",
     "test": "mocha test --recursive",

@@ -125,7 +125,6 @@ module.exports.getTopTrend = woeid => {
         if (trends.length == 0) {
           reject(new Error('No valid trends found in the specified location'));
         } else {
-          console.log(`choosed trend ${trends[0].query}`);
           resolve(trends[0].query);
         }
       }
