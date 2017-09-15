@@ -49,10 +49,10 @@ describe('Trending bot', () => {
   });
 
   it('handles twitter client error', () => {
-    twitterStub.getWoeid.rejects(new Error('some error'));
-    twitterStub.getTopTrend.rejects(new Error('some error'));
-    twitterStub.search.rejects(new Error('some error'));
-    twitterStub.tweet.rejects(new Error('some error'));
+    twitterStub.getWoeid.rejects();
+    twitterStub.getTopTrend.rejects();
+    twitterStub.search.rejects();
+    twitterStub.tweet.rejects();
 
     return new Promise((resolve, reject) => {
       sut.tweetOnTrendingTopic((err) => {
@@ -85,7 +85,7 @@ describe('Trending bot', () => {
   });
 
   it('keeps running after an error', () => {
-    twitterStub.getWoeid.rejects(new Error('some error'));
+    twitterStub.getWoeid.rejects();
     new Promise(function(resolve, reject) {
       sut.tweetOnTrendingTopic((err) => {
         if (err) {
@@ -96,7 +96,7 @@ describe('Trending bot', () => {
       });
     }).then(() => {
       assert.isTrue(sut.isRunning(), 'Bot stopped running.');
-      sut.shutdown();      
+      sut.shutdown();
     });
   });
 
