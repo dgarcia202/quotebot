@@ -94,11 +94,11 @@ module.exports.getWoeid = (city, country) => {
     },
     (err, data) => {
       if (err) {
-        reject(err.message);
+        reject(err);
       } else {
         let filtered = data.filter(x => x.name == city && x.country == country);
         if (filtered.length == 0) {
-          reject('New york in the US not found as a trending place available');
+          reject(new Error('New york in the US not found as a trending place available'));
         } else {
           resolve(filtered[0].woeid);
         }

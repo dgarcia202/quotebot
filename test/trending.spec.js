@@ -49,20 +49,21 @@ describe('Trending bot', () => {
   });
 
   it('handles twitter client error', () => {
-    return new Promise((resolve, reject) => {
-      twitterStub.tweet.rejects();
-      twitterStub.getWoeid.rejects();
-      twitterStub.getTopTrend.rejects();
-      twitterStub.search.rejects();
+    twitterStub.getWoeid.rejects(new Error('some error'));
+    twitterStub.getTopTrend.rejects(new Error('some error'));
+    twitterStub.search.rejects(new Error('some error'));
+    twitterStub.tweet.rejects(new Error('some error'));
 
+    return new Promise((resolve, reject) => {
       sut.tweetOnTrendingTopic((err) => {
         if (err) {
-          reject();
+          resolve(err);
         } else {
-          resolve();
+          reject(new Error('error should happen'));
         }
       });
-    }).then(() => {
+    }).then((err) => {
+      assert.isOk(err, 'Error should be informed');
       assert.isNotTrue(twitterStub.tweet.called, 'Nothing should be twitted');
       sut.shutdown();
     });
@@ -72,7 +73,7 @@ describe('Trending bot', () => {
     return new Promise((resolve, reject) => {
       sut.tweetOnTrendingTopic((err) => {
         if (err) {
-          reject();
+          reject(err);
         } else {
           resolve();
         }

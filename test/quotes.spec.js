@@ -95,8 +95,7 @@ describe('Quotes bot', () => {
 
   it('keeps running after successful quote', done => {
     mockQuoteRequestOk();
-    sut.tweetQuotes((err) => {
-      assert.isNotOk(err, 'Unexpected error happened');
+    sut.tweetQuotes(() => {
       assert.isTrue(sut.isRunning(), 'Bot stopped running.');
       sut.shutdown();
       done();
@@ -105,8 +104,7 @@ describe('Quotes bot', () => {
 
   it('keeps running after error', done => {
     mockQuoreRequestError();
-    sut.tweetQuotes((err) => {
-      assert.isNotOk(err, 'Unexpected error happened');
+    sut.tweetQuotes(() => {
       assert.isTrue(sut.isRunning(), 'Bot stopped running.');
       sut.shutdown();
       done();
