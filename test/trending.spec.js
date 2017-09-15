@@ -30,21 +30,34 @@ describe('Trending bot', () => {
     ritaStub.RiMarkov.prototype.generateSentences.restore();
   });
 
-  it('tweets on the top trending', done => {
-    sut.tweetOnTrendingTopic((err) => {
-      assert.isNotOk(err, 'Unexpected error happened');
+  it('tweets on the top trending', () => {
+
+    return new Promise((resolve, reject) => {
+      sut.tweetOnTrendingTopic((err) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve();
+        }
+      });      
+    }).then(() => {
       assert.isTrue(twitterStub.tweet.calledOnce, 'Nothing was twitted');
       sut.shutdown();
-      done();
     });
   });
 
-  it('choses the top topic of the list', done => {
-    sut.tweetOnTrendingTopic((err, data) => {
-      assert.isNotOk(err, 'Unexpected error happened');
+  it('choses the top topic of the list', () => {
+    return new Promise((resolve, reject) => {
+      sut.tweetOnTrendingTopic((err, data) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(data);
+        }
+      });
+    }).then((data) => {
       assert.equal(data.trend, 'some_topic', 'Trend query is missed in results');
       sut.shutdown();
-      done();
     });
   });
 
