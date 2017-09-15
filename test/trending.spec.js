@@ -110,7 +110,7 @@ describe('Trending bot', () => {
           reject(new Error('error should happen'));
         }
       });
-    }).then((err) => {
+    }).then(() => {
       sut.shutdown();
     });
   });
@@ -131,7 +131,7 @@ describe('Trending bot', () => {
           reject(new Error('error should happen'));
         }
       });
-    }).then((err) => {
+    }).then(() => {
       sut.shutdown();
     });
   });

@@ -28,6 +28,10 @@ module.exports.tweetOnTrendingTopic = function tweetOnTrendingTopic(callback) {
   .then((elements) => {
       markov.loadText(elements.map(x => cleanTweet(x)).join('. '));
       data.text = markov.generateSentences(5)[Math.floor(Math.random() * 5)];
+      if (data.text.length > 140) {
+        return Promise.reject(new Error("Generated text is too long"));
+      }
+
       return twitter.tweet(data.text);
   })
   .then(id => {
