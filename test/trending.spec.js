@@ -84,7 +84,22 @@ describe('Trending bot', () => {
     });
   });
 
-  it('keeps running after an error');
+  it('keeps running after an error', () => {
+    twitterStub.getWoeid.rejects(new Error('some error'));
+    new Promise(function(resolve, reject) {
+      sut.tweetOnTrendingTopic((err) => {
+        if (err) {
+          resolve(err);
+        } else {
+          reject(new Error('error should happen'));
+        }
+      });
+    }).then(() => {
+      assert.isTrue(sut.isRunning(), 'Bot stopped running.');
+      sut.shutdown();      
+    });
+  });
+
   it('handles no topic found');
   it('handles no valid topics found');
   it('ignores topics without tweets');
