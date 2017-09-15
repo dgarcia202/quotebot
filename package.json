@@ -9,8 +9,9 @@
   "main": "src/index.js",
   "scripts": {
     "start": "cls & node src/index.js",
-    "test": "mocha test --recursive",
-    "watch": "mocha test --recursive --watch"
+    "test": "npm run --silent lint && mocha test --recursive",
+    "watch": "mocha test --recursive --watch",
+    "lint": ".\\node_modules\\.bin\\eslint ./src/**/*.js ./test/**/*.js"
   },
   "now": {
     "alias": "silly-bot-14",
@@ -27,6 +28,7 @@
   },
   "devDependencies": {
     "chai": "^4.1.2",
+    "eslint": "^4.6.1",
     "mocha": "^3.5.2",
     "nock": "^9.0.14",
     "proxyquire": "^1.8.0",

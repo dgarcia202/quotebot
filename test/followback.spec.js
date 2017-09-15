@@ -1,19 +1,15 @@
 'use strict';
 
+const proxyquire = require('proxyquire');
+const assert = require('chai').assert;
+const sinon = require('sinon');
+
+let twitterStub = require('../src/twitter-client');
+let sut = proxyquire('../src/followback', {
+  './twitter-client': twitterStub
+});
+
 describe('Folowback bot', () => {
-  const proxyquire = require('proxyquire');
-  const assert = require('chai').assert;
-  const nock = require('nock');
-  const sinon = require('sinon');
-
-  let sut, twitterStub;
-
-  before(() => {
-    twitterStub = require('../src/twitter-client');
-    sut = proxyquire('../src/followback', {
-      './twitter-client': twitterStub
-    });
-  });
 
   beforeEach(() => {
     sinon.stub(twitterStub, 'getAllFollowerIds').resolves(['1', '2', '3', '4', '5']);
@@ -28,7 +24,7 @@ describe('Folowback bot', () => {
   });
 
   it('follows back new followers', done => {
-    sut.updateOverTime((err, data) => {
+    sut.updateOverTime(() => {
       assert.isTrue(twitterStub.follow.calledTwice, 'Twitter follow method was not called the correct number of times.');
       sut.shutdown();
       done();
@@ -38,7 +34,7 @@ describe('Folowback bot', () => {
   it('handles no new users to follow', done => {
     twitterStub.getAllFollowerIds.resolves(['1', '2', '3']);
     twitterStub.getAllFriendIds.resolves(['1', '2', '3']);
-    sut.updateOverTime((err, data) => {
+    sut.updateOverTime(() => {
       assert.isNotTrue(twitterStub.follow.called, 'Twitter follow method should not be called.');
       sut.shutdown();
       done();
@@ -49,7 +45,7 @@ describe('Folowback bot', () => {
     twitterStub.getAllFollowerIds.rejects(new Error('Twitter is down!'));
     twitterStub.getAllFriendIds.rejects(new Error('Twitter is down!'));
     twitterStub.follow.rejects(new Error('Twitter is down!'));
-    sut.updateOverTime((err, data) => {
+    sut.updateOverTime((err) => {
       assert.isOk(err, 'Error variable not set.');
       sut.shutdown();
       done();
@@ -57,7 +53,7 @@ describe('Folowback bot', () => {
   });
 
   it('keeps running after an iteration', done => {
-    sut.updateOverTime((err, data) => {
+    sut.updateOverTime(() => {
       assert.isTrue(sut.isRunning(), 'Bot stopped running.');
       sut.shutdown();
       done();
@@ -65,7 +61,7 @@ describe('Folowback bot', () => {
   });
 
   it('keeps running after failure', done => {
-    sut.updateOverTime((err, data) => {
+    sut.updateOverTime(() => {
       assert.isTrue(sut.isRunning(), 'Bot stopped running.');
       sut.shutdown();
       done();

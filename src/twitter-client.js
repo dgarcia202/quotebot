@@ -9,7 +9,7 @@ function getFollowersRecursive(cursor, ids, callback) {
     count:5000,
     cursor: cursor,
     stringify_ids: true
-  }, (err, data, response) => {
+  }, (err, data) => {
     if (err) {
       throw err;
     } else {
@@ -29,7 +29,7 @@ function getFriendsRecurive(cursor, ids, callback) {
     count:100,
     cursor: cursor,
     stringify_ids: true
-  }, (err, data, response) => {
+  }, (err, data) => {
     if (err) {
       throw err;
     } else {
@@ -47,7 +47,7 @@ module.exports.tweet = (status_text) => {
   return new Promise((resolve, reject) => {
     twit.post('statuses/update', {
       status: status_text
-    }, (err, data, response) => {
+    }, (err, data) => {
       if (err) {
         reject(err.message);
       } else {
@@ -58,7 +58,7 @@ module.exports.tweet = (status_text) => {
 };
 
 module.exports.getAllFollowerIds = () => {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     getFollowersRecursive('-1', [], (ids) => {
       resolve(ids);
     });
@@ -66,7 +66,7 @@ module.exports.getAllFollowerIds = () => {
 };
 
 module.exports.getAllFriendIds = () => {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     getFriendsRecurive('-1', [], (ids) => {
       resolve(ids);
     });
@@ -77,7 +77,7 @@ module.exports.follow = (id) => {
   return new Promise((resolve, reject) => {
     twit.post('friendships/create', {
       user_id: id
-    }, (err, data, response) => {
+    }, (err, data) => {
       if (err) {
         reject(err);
       } else {
@@ -92,7 +92,7 @@ module.exports.getWoeid = (city, country) => {
     twit.get('trends/available',
     {
     },
-    (err, data, response) => {
+    (err, data) => {
       if (err) {
         reject(err.message);
       } else {
@@ -113,7 +113,7 @@ module.exports.getTopTrend = woeid => {
     {
       id: woeid
     },
-    (err, data, response) => {
+    (err, data) => {
       if (err) {
         reject(err);
       } else {
@@ -138,7 +138,7 @@ module.exports.search = query => {
       q: query,
       count: 100,
       lang: 'en'
-    }, (err, data, response) => {
+    }, (err, data) => {
       if (err) {
         reject(err);
       } else {

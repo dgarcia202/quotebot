@@ -1,29 +1,24 @@
 'use strict';
 
+const proxyquire = require('proxyquire');
+const assert = require('chai').assert;
+const sinon = require('sinon');
+
+let twitterStub = require('../src/twitter-client');
+let ritaStub = require('rita');
+let sut = proxyquire('../src/trending', {
+  'rita': ritaStub,
+  './twitter-client': twitterStub
+});
+
 describe('Trending bot', () => {
-  const proxyquire = require('proxyquire');
-  const assert = require('chai').assert;
-  const nock = require('nock');
-  const sinon = require('sinon');
-
-  let sut, twitterStub, ritaStub;
-
-  before(() => {
-    twitterStub = require('../src/twitter-client');
-    ritaStub = require('rita');
-    sut = proxyquire('../src/trending', {
-      'rita': ritaStub,
-      './twitter-client': twitterStub
-    });
-  });
-
   beforeEach(() => {
     sinon.stub(twitterStub, 'tweet').resolves('fake_tweet_id');
     sinon.stub(twitterStub, 'getWoeid').resolves('fake_woeid');
     sinon.stub(twitterStub, 'getTopTrend').resolves('some_topic');
     sinon.stub(twitterStub, 'search').resolves(['tweet A', 'tweet B', 'tweet C']);
     sinon.stub(ritaStub.RiMarkov.prototype, 'loadText');
-    sinon.stub(ritaStub.RiMarkov.prototype, 'generateSentences').returns(['','','','','']);
+    sinon.stub(ritaStub.RiMarkov.prototype, 'generateSentences').returns(['', '', '', '', '']);
   });
 
   afterEach(() => {
@@ -36,7 +31,8 @@ describe('Trending bot', () => {
   });
 
   it('tweets on the top trending', done => {
-    sut.tweetOnTrendingTopic((err, data) => {
+    sut.tweetOnTrendingTopic((err) => {
+      assert.isNotOk(err, 'Unexpected error happened');
       assert.isTrue(twitterStub.tweet.calledOnce, 'Nothing was twitted');
       sut.shutdown();
       done();
@@ -45,6 +41,7 @@ describe('Trending bot', () => {
 
   it('choses the top topic of the list', done => {
     sut.tweetOnTrendingTopic((err, data) => {
+      assert.isNotOk(err, 'Unexpected error happened');
       assert.equal(data.trend, 'some_topic', 'Trend query is missed in results');
       sut.shutdown();
       done();
@@ -58,9 +55,8 @@ describe('Trending bot', () => {
       twitterStub.getTopTrend.rejects();
       twitterStub.search.rejects();
 
-      sut.tweetOnTrendingTopic((err, data) => {
+      sut.tweetOnTrendingTopic((err) => {
         if (err) {
-          console.log(err);
           reject();
         } else {
           resolve();
@@ -74,7 +70,7 @@ describe('Trending bot', () => {
 
   it('keeps running after an iteration', () => {
     return new Promise((resolve, reject) => {
-      sut.tweetOnTrendingTopic((err, data) => {
+      sut.tweetOnTrendingTopic((err) => {
         if (err) {
           reject();
         } else {

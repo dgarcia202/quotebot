@@ -15,7 +15,6 @@ module.exports = {
     access_token: process.env.ACCESS_TOKEN,
     access_token_secret: process.env.ACCESS_TOKEN_SECRET
   },
-  start_http: false,
   quote_interval: hours(10),
   followback_interval: minutes(15),
   trending_interval: hours(2),

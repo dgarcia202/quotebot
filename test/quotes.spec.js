@@ -1,12 +1,16 @@
 'use strict';
 
-describe('Quotes bot', () => {
-  const proxyquire = require('proxyquire');
-  const assert = require('chai').assert;
-  const nock = require('nock');
-  const sinon = require('sinon');
+const proxyquire = require('proxyquire');
+const assert = require('chai').assert;
+const nock = require('nock');
+const sinon = require('sinon');
 
-  let sut, twitterStub;
+let twitterStub = require('../src/twitter-client');
+let sut = proxyquire('../src/quotes', {
+  './twitter-client': twitterStub
+});
+
+describe('Quotes bot', () => {
 
   function mockQuoteRequestOk() {
     nock('http://api.forismatic.com:80', {"encodedQueryParams":true})
@@ -38,13 +42,6 @@ describe('Quotes bot', () => {
       .replyWithError('Internal server error');
   }
 
-  before(() => {
-    twitterStub = require('../src/twitter-client');
-    sut = proxyquire('../src/quotes', {
-      './twitter-client': twitterStub
-    });    
-  });
-
   beforeEach(() => {
     sinon.stub(twitterStub, 'tweet').resolves('fake_twit_id');
   });
@@ -57,6 +54,7 @@ describe('Quotes bot', () => {
   it('successfully tweets quote', done => {
     mockQuoteRequestOk();
     sut.tweetQuotes((err, data) => {
+      assert.isNotOk(err, 'Unexpected error happened');
       assert.equal(data, 'fake_twit_id', 'Tweet id is not correct.');
       assert.isTrue(twitterStub.tweet.called, 'Twitter status was not updated.');
       sut.shutdown();
@@ -66,7 +64,7 @@ describe('Quotes bot', () => {
 
   it('avoids tweeting when quote is too long', done => {
     mockQuoteRequestTooLong();
-    sut.tweetQuotes((err, data) => {
+    sut.tweetQuotes((err) => {
       assert.isOk(err, 'Error object is not set.');
       assert.isNotTrue(twitterStub.tweet.called, 'Twitter status shouldn\'t be updated.');
       sut.shutdown();
@@ -76,7 +74,7 @@ describe('Quotes bot', () => {
 
   it('handles quote API down', done => {
     mockQuoreRequestError();
-    sut.tweetQuotes((err, data) => {
+    sut.tweetQuotes((err) => {
       assert.isOk(err, 'Error object is not set.');
       assert.isNotTrue(twitterStub.tweet.called, 'Twitter status shouldn\'t be updated.');
       sut.shutdown();
@@ -87,7 +85,7 @@ describe('Quotes bot', () => {
   it('handles twitter client error', done => {
     mockQuoteRequestOk();
     twitterStub.tweet.throws();
-    sut.tweetQuotes((err, data) => {
+    sut.tweetQuotes((err) => {
       assert.isOk(err, 'Error object is not set.');
       assert.isTrue(twitterStub.tweet.called, 'Twitter call wasn\'t made.');
       sut.shutdown();
@@ -97,7 +95,8 @@ describe('Quotes bot', () => {
 
   it('keeps running after successful quote', done => {
     mockQuoteRequestOk();
-    sut.tweetQuotes((err, data) => {
+    sut.tweetQuotes((err) => {
+      assert.isNotOk(err, 'Unexpected error happened');
       assert.isTrue(sut.isRunning(), 'Bot stopped running.');
       sut.shutdown();
       done();
@@ -106,7 +105,8 @@ describe('Quotes bot', () => {
 
   it('keeps running after error', done => {
     mockQuoreRequestError();
-    sut.tweetQuotes((err, data) => {
+    sut.tweetQuotes((err) => {
+      assert.isNotOk(err, 'Unexpected error happened');
       assert.isTrue(sut.isRunning(), 'Bot stopped running.');
       sut.shutdown();
       done();
