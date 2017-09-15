@@ -51,24 +51,36 @@ describe('Quotes bot', () => {
     nock.cleanAll();
   });
 
-  it('successfully tweets quote', done => {
+  it('successfully tweets quote', () => {
     mockQuoteRequestOk();
-    sut.tweetQuotes((err, data) => {
-      assert.isNotOk(err, 'Unexpected error happened');
+    return new Promise((resolve, reject) => {
+      sut.tweetQuotes((err, data) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(data);
+        }
+      })
+    }).then((data) => {
       assert.equal(data, 'fake_twit_id', 'Tweet id is not correct.');
       assert.isTrue(twitterStub.tweet.called, 'Twitter status was not updated.');
       sut.shutdown();
-      done();
     });
   });
 
-  it('avoids tweeting when quote is too long', done => {
+  it('avoids tweeting when quote is too long', () => {
     mockQuoteRequestTooLong();
-    sut.tweetQuotes((err) => {
-      assert.isOk(err, 'Error object is not set.');
+    return new Promise((resolve, reject) => {
+      sut.tweetQuotes((err) => {
+        if (err) {
+          resolve(err);
+        } else {
+          reject(new Error('method should fail'));
+        }
+      });     
+    }).then(() => {
       assert.isNotTrue(twitterStub.tweet.called, 'Twitter status shouldn\'t be updated.');
       sut.shutdown();
-      done();
     });
   });
 
