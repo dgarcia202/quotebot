@@ -86,7 +86,7 @@ describe('Trending bot', () => {
 
   it('keeps running after an error', () => {
     twitterStub.getWoeid.rejects();
-    new Promise(function(resolve, reject) {
+    return new Promise(function(resolve, reject) {
       sut.tweetOnTrendingTopic((err) => {
         if (err) {
           resolve(err);
@@ -100,9 +100,39 @@ describe('Trending bot', () => {
     });
   });
 
-  it('handles no topic found');
-  it('handles no valid topics found');
-  it('ignores topics without tweets');
-  it('ignores promoted topics');
-  it('handles text too long');
+  it('handles no topic found', () => {
+    twitterStub.getTopTrend.rejects();
+    return new Promise(function(resolve, reject) {
+      sut.tweetOnTrendingTopic((err) => {
+        if (err) {
+          resolve(err);
+        } else {
+          reject(new Error('error should happen'));
+        }
+      });
+    }).then((err) => {
+      sut.shutdown();
+    });
+  });
+
+  it('handles text too long', () => {
+    let long_sentence = 'If you do what youve always done, youll get what youve always gotten. If you do what youve always done, youll get what youve always gotten. If you do what youve.';
+    let arr = [];
+    for (let i = 0; i < 5; i++) {
+      arr.push(long_sentence);
+    }
+
+    ritaStub.RiMarkov.prototype.generateSentences.returns(arr);
+    return new Promise(function(resolve, reject) {
+      sut.tweetOnTrendingTopic((err) => {
+        if (err) {
+          resolve(err);
+        } else {
+          reject(new Error('error should happen'));
+        }
+      });
+    }).then((err) => {
+      sut.shutdown();
+    });
+  });
 });
